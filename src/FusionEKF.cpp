@@ -2,6 +2,7 @@
 #include "tools.h"
 #include "Eigen/Dense"
 #include <iostream>
+#include <math.h>
 
 using namespace std;
 using Eigen::MatrixXd;
@@ -36,7 +37,30 @@ FusionEKF::FusionEKF() {
     * Finish initializing the FusionEKF.
     * Set the process and measurement noises
   */
+  // lesson 5 video 10
+  H_laser_ << 1,0,0,0
+             ,0,1,0,0;
 
+  //TODO  change this
+  // Hj_ << 0,0,0,0
+  //        0,0,0,0
+  //        0,0,0,0;
+
+  // ekf_.P_;
+  ekf_.P_ = MatrixXd(4, 4);
+	ekf_.P_ << 1, 0,    0,    0,
+             0, 1,    0,    0,
+             0, 0, 1000,    0,
+             0, 0,    0, 1000;
+  ekf_.F_ = MatrixXd(4, 4);
+
+  ekf_.F_ << 1,0,0,0,
+             0,1,0,0,
+             0,0,1,0,
+             0,0,0,1;
+   
+  noise_ax = 3;
+  noise_ay = 3;
 
 }
 
@@ -67,13 +91,21 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
       /**
       Convert radar from polar to cartesian coordinates and initialize state.
       */
+      float ro = measurement_pack.raw_measurements_(0);
+      float theta = measurement_pack.raw_measurements_(1);
+      ekf_.x_(0) = ro * cos(theta);
+      ekf_.x_(1) = ro * sin(theta);
     }
     else if (measurement_pack.sensor_type_ == MeasurementPackage::LASER) {
       /**
       Initialize state.
       */
+
+      ekf_.x_(0) = measurement_pack.raw_measurements_(0);
+      ekf_.x_(1) = measurement_pack.raw_measurements_(1);
     }
 
+    previous_timestamp_ = measurement_pack.timestamp_;
     // done initializing, no need to predict or update
     is_initialized_ = true;
     return;
