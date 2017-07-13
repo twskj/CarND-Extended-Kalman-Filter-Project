@@ -32,6 +32,7 @@ public:
   KalmanFilter ekf_;
 
 private:
+
   // check whether the tracking toolbox was initialized or not (first measurement)
   bool is_initialized_;
 
@@ -44,6 +45,10 @@ private:
   Eigen::MatrixXd R_radar_;
   Eigen::MatrixXd H_laser_;
   Eigen::MatrixXd Hj_;
+
+  //acceleration noise components
+	float noise_ax;
+	float noise_ay;
 };
 
 #endif /* FusionEKF_H_ */
