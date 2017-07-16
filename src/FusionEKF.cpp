@@ -61,8 +61,8 @@ FusionEKF::FusionEKF()
                0,0,0,1;
 
   //ekf_.Q_ = MatrixXd(4, 4);
-  noise_ax = 3;
-  noise_ay = 3;
+  noise_ax = 9;
+  noise_ay = 9;
 }
 
 /**
@@ -87,7 +87,8 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack)
     // first measurement
     cout << "EKF: " << endl;
     ekf_.x_ = VectorXd(4);
-    ekf_.x_ << 1, 1, 1, 1;
+    //tune rmse here
+    ekf_.x_ << 0,0,0,0;
 
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR)
     {
