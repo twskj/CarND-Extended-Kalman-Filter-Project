@@ -1,4 +1,7 @@
 #include "kalman_filter.h"
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -52,9 +55,9 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   */
 
    //section 14 Radar measurement
-
   float pos_x = x_(0);
   float pos_y = x_(1);
+  
   float vx = x_(2);
   float vy = x_(3);
 
@@ -62,9 +65,17 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   float theta = atan2(pos_y,pos_x);
   float rho_dot = (pos_x*vx+pos_y*vy)/rho;
   VectorXd z_pred = VectorXd(3);
+
   z_pred << rho,theta,rho_dot;
 
   VectorXd y = z - z_pred;
+
+  while (y[1] > (2*M_PI)) {
+        y[1] = y[1]-(2*M_PI);
+  }
+  while (y[1] < -(M_PI)) {
+      y[1] = y[1]+M_PI;
+  }
 
 	MatrixXd Ht = H_.transpose();
 	MatrixXd S = H_ * P_ * Ht + R_;
