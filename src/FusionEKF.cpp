@@ -88,7 +88,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack)
     cout << "EKF: " << endl;
     ekf_.x_ = VectorXd(4);
     //tune rmse here
-    ekf_.x_ << 0,0,0,0;
+    ekf_.x_ << 0.1,0.1,0.1,0.1;
 
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR)
     {
